@@ -4,10 +4,8 @@ from celery.schedules import crontab
 
 from main_app.celery_task_registry import CELERY_TASK_LIST
 from main_app.views.views import page
-#from main_app.tasks.tasks import periodic_task
 
 import os
-
 
 # Extensions
 from main_app.extensions import db

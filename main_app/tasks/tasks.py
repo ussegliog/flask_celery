@@ -43,5 +43,6 @@ def bash_command(cmd):
 def periodic_task():
 
     bash_command('a="Apples and oranges" && echo "${a}"')
+    bash_command('sleep 20s && echo "After Pouet \n"')
     print('Hi! from periodic_task')
  
