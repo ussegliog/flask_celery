@@ -3,6 +3,12 @@ import random
 
 import subprocess
 
+from main_app.extensions import db
+from main_app.models.models import Choice_Task
+from main_app.models.models import Request
+
+import pickle
+
 celery = celery_app
 
 
@@ -35,6 +41,18 @@ def my_task(self):
 
     return choice
 
+@celery.task()
+def handle_number_requests(request_id, number_list, jobtodo_list):
+    
+    # Put something into our DB
+    my_request = Request(request_id=request_id, number_list=pickle.dumps(number_list),
+                         jobToDo_list=pickle.dumps(jobtodo_list))
+    db.session.add(my_request)
+    db.session.commit()
+
+    print(pickle.loads(my_request.number_list))
+    return my_request.id
+
 
 def bash_command(cmd):
     subprocess.Popen(['/bin/bash', '-c', cmd])
@@ -44,5 +62,10 @@ def periodic_task():
 
     bash_command('a="Apples and oranges" && echo "${a}"')
     bash_command('sleep 20s && echo "After Pouet \n"')
+
+    test = Request.query.filter_by(request_id=3).first_or_404()
+
+    print(pickle.loads(test.number_list))
+    
     print('Hi! from periodic_task')
  

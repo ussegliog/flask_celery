@@ -19,14 +19,6 @@ def make_celery(app=None):
 
     #Celery configuration
     app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-    # app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-    # app.config['CELERYBEAT_SCHEDULE'] = {
-    #     # Executes every minute
-    #     'periodic_task-every-minute': {
-    #         'task': 'periodic_task',
-    #         'schedule': crontab(minute="*")
-    #     }
-    # }
     app.config['result_backend'] = 'redis://localhost:6379/0'
     app.config['beat_schedule'] = {
         # Executes every minute
@@ -37,7 +29,7 @@ def make_celery(app=None):
     }
 
     
-    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['result_backend'])
     celery.conf.update({
         'timezone': 'utc',
         'imports': CELERY_TASK_LIST,
@@ -76,7 +68,10 @@ def create_app(settings_override=None):
     if settings_override:
         app.config.update(settings_override)
 
-    # To register our view
+    # Apply extensions
+    extensions(app)
+        
+    # To register our view
     app.register_blueprint(page)
     
     return app
@@ -89,6 +84,9 @@ def extensions(app):
     :return: None
     """
     db.init_app(app)
+    
+    with app.app_context():
+        db.create_all()
 
     return None
 
