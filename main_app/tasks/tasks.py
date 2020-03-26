@@ -1,13 +1,12 @@
 from main_app.app import celery_app
 import random
 
-import subprocess
-
 from main_app.extensions import db
 from main_app.models.models import Choice_Task
 from main_app.models.models import Request
 
 import pickle
+import subprocess
 
 celery = celery_app
 
@@ -43,15 +42,23 @@ def my_task(self):
 
 @celery.task()
 def handle_number_requests(request_id, number_list, jobtodo_list):
-    
-    # Put something into our DB
-    my_request = Request(request_id=request_id, number_list=pickle.dumps(number_list),
-                         jobToDo_list=pickle.dumps(jobtodo_list))
-    db.session.add(my_request)
-    db.session.commit()
 
-    print(pickle.loads(my_request.number_list))
-    return my_request.id
+    response = "OK"
+    # Put the request into our DB
+    try :
+        my_request = Request(request_id=request_id, number_list=pickle.dumps(number_list),
+                         jobToDo_list=pickle.dumps(jobtodo_list))
+        db.session.add(my_request)
+        db.session.commit()
+
+        print(pickle.loads(my_request.number_list))
+    except Exception as exc :
+        response = "Error during DB transaction : Please Check the request"
+        
+    return response
+
+
+
 
 
 def bash_command(cmd):
