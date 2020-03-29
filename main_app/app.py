@@ -1,3 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+"""
+Instanciate our Celery and Flask applications
+"""
+
 from flask import Flask
 from celery import Celery
 from celery.schedules import crontab
@@ -19,25 +26,25 @@ def make_celery(app=None):
 
     #Celery configuration
     app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-    # app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-    # app.config['CELERYBEAT_SCHEDULE'] = {
-    #     # Executes every minute
-    #     'periodic_task-every-minute': {
-    #         'task': 'periodic_task',
-    #         'schedule': crontab(minute="*")
-    #     }
-    # }
     app.config['result_backend'] = 'redis://localhost:6379/0'
     app.config['beat_schedule'] = {
         # Executes every minute
-        "periodic_task-every-minute": {
+        "periodic_task-every-5-minutes": {
             "task": "main_app.tasks.tasks.periodic_task",
-            "schedule": crontab(minute="*")
+            "schedule": crontab(minute="*/5") # every 5 minutes
+        },
+        "periodic_sum": {
+            "task": "main_app.tasks.tasks.sum_task",
+            "schedule": crontab(minute="*") # every minute
+        },
+        "periodic_mul": {
+            "task": "main_app.tasks.tasks.mul_task",
+            "schedule": crontab(minute="*") # every minute
         }
     }
 
     
-    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['result_backend'])
     celery.conf.update({
         'timezone': 'utc',
         'imports': CELERY_TASK_LIST,
@@ -76,7 +83,10 @@ def create_app(settings_override=None):
     if settings_override:
         app.config.update(settings_override)
 
-    # To register our view
+    # Apply extensions
+    extensions(app)
+        
+    # To register our view
     app.register_blueprint(page)
     
     return app
@@ -89,6 +99,9 @@ def extensions(app):
     :return: None
     """
     db.init_app(app)
+    
+    with app.app_context():
+        db.create_all()
 
     return None
 
