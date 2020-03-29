@@ -1,10 +1,12 @@
 from main_app.app import celery_app
-import random
-
 from main_app.extensions import db
 from main_app.models.models import Request
 from main_app.models.models import Numbers
 
+import random
+import os
+from pathlib import Path
+import json
 import pickle
 import subprocess
 
@@ -55,10 +57,11 @@ def handle_number_requests(request_id, number_list, jobtodo_list):
         # Second into number table
         # Loop on number_list and jobtodo_list to store one by one number into number table
         for i in range(0, len(number_list)):
-            my_number = Numbers(numbers=number_list[0], jobToDo=jobtodo_list[0],
+            my_number = Numbers(numbers=number_list[i], jobToDo=jobtodo_list[i],
                                 request_id=request_id)
             db.session.add(my_number)
-            
+
+        # Save chgts into our DB
         db.session.commit()
 
     except Exception as exc :
@@ -80,7 +83,7 @@ def update_number_requests(Ntable_id, N_list, JTD_list, res_list):
         # Query on id
         my_number = Numbers.query.filter_by(id=Ntable_id[i]).first()
         # Update my number
-        my_number.jobtodo = JTD_list[i]
+        my_number.jobToDo = JTD_list[i]
         my_number.result_numbers = res_list[i]
 
         # Store rid for current number
@@ -117,34 +120,106 @@ def update_number_requests(Ntable_id, N_list, JTD_list, res_list):
 def bash_command(cmd):
     subprocess.Popen(['/bin/bash', '-c', cmd])
 
+# python scripts
+def python_script(script, inputArg):
+    subprocess.Popen(['python', script, inputArg])
 
+    
 @celery.task()
 def periodic_task():
 
     bash_command('a="Apples and oranges" && echo "${a}"')
     bash_command('sleep 20s && echo "After Pouet \n"')
 
-    #test = Request.query.filter_by(request_id=3).first_or_404()
-
-    #print(pickle.loads(test.number_list))
-    
     print('Hi! from periodic_task')
  
 #### Processings : with sum and mul operations ####
 # Sum
-@celery.task()
-def sum_task():
+@celery.task(bind=True)
+def sum_task(self):
 
-    #bash_command('a="Apples and oranges" && echo "${a}"')
-    #bash_command('sleep 20s && echo "After Pouet \n"')
+    # Get current task id
+    currentTaskId = self.request.id
 
-    print('Hi! from sum_task')
+    # Select into Numbers table, number with sum to do
+    numbers_to_sum = Numbers.query.filter_by(jobToDo="sum").all()
+
+    print(len(numbers_to_sum))
+
+    # Check number to sum (must be > 0)
+    if len(numbers_to_sum) > 0:
+        # Write numbers into a file
+        inputJson = {}
+        inputJson['numbers_id'] = []
+        inputJson['numbers'] = []
+
+        for i in range(0,len(numbers_to_sum)):
+            # Extract id and numbers information
+            inputJson['numbers_id'].append(numbers_to_sum[i].id)
+            inputJson['numbers'].append(numbers_to_sum[i].numbers)
+
+            # Update jobToDo with Doing
+            numbers_to_sum[i].jobToDo = "sum_Doing"
+
+        # Commit changes into our DB
+        db.session.commit()
+        
+        # Write the json file
+        JSON_PATH = os.path.join(Path(__file__).parent.parent.parent, 'processings/input_files/')
+        JSON_NAME = os.path.join(JSON_PATH, currentTaskId + '.json')
+        print(JSON_NAME)
+
+
+        with open(JSON_NAME, 'w') as f:
+            json.dump(inputJson, f)
+
+        # Launch sum processing with a SubProcess
+        SCRIPT_PATH = os.path.join(Path(__file__).parent.parent.parent, 'processings/sum.py')
+        python_script(SCRIPT_PATH, JSON_NAME)
+
+        print('Hi! from sum_task')
 
 # Mul
-@celery.task()
-def mul_task():
+@celery.task(bind=True)
+def mul_task(self):
 
-    #bash_command('a="Apples and oranges" && echo "${a}"')
-    #bash_command('sleep 20s && echo "After Pouet \n"')
+    # Get current task id
+    currentTaskId = self.request.id
 
-    print('Hi! from mul_task')
+    # Select into Numbers table, number with mul to do
+    numbers_to_mul = Numbers.query.filter_by(jobToDo="mul").all()
+
+    print(len(numbers_to_mul))
+
+    # Check number to mul (must be > 0)
+    if len(numbers_to_mul) > 0:
+        # Write numbers into a file
+        inputJson = {}
+        inputJson['numbers_id'] = []
+        inputJson['numbers'] = []
+
+        for i in range(0,len(numbers_to_mul)):
+            # Extract id and numbers information
+            inputJson['numbers_id'].append(numbers_to_mul[i].id)
+            inputJson['numbers'].append(numbers_to_mul[i].numbers)
+
+            # Update jobToDo with Doing
+            numbers_to_mul[i].jobToDo = "mul_Doing"
+
+        # Commit changes into our DB
+        db.session.commit()
+        
+        # Write the json file
+        JSON_PATH = os.path.join(Path(__file__).parent.parent.parent, 'processings/input_files/')
+        JSON_NAME = os.path.join(JSON_PATH, currentTaskId + '.json')
+        print(JSON_NAME)
+
+
+        with open(JSON_NAME, 'w') as f:
+            json.dump(inputJson, f)
+
+        # Launch mul processing with a SubProcess
+        SCRIPT_PATH = os.path.join(Path(__file__).parent.parent.parent, 'processings/mul.py')
+        python_script(SCRIPT_PATH, JSON_NAME)
+
+        print('Hi! from mul_task')

@@ -28,7 +28,7 @@ if __name__ == "__main__":
     dataRequest = {}
     dataRequest["rid"] = args.rid
     dataRequest["numbers"] =  [51, 52, 53]
-    dataRequest["jobtodo"]=  ["plus", "mul", "plus"]
+    dataRequest["jobtodo"]=  ["sum", "mul", "sum"]
     
     req = requests.post(BASE_URL + "number_request",
                         data=json.dumps(dataRequest),
@@ -87,17 +87,17 @@ if __name__ == "__main__":
 
     #### 4): Update the request  ####
     # Try a update : with number id
-    dataUpdate = {}
-    dataUpdate['numbers_id'] = [13, 14, 18] # Select wanted numbers (after a print...)
-    dataUpdate['numbers'] =  [51, 52, 53]
-    dataUpdate['jobtodo_new']=  ["plus_Done", "mul_Done", "plus_Done"]
-    dataUpdate['result'] =  [53, 104, 55]
+    # dataUpdate = {}
+    # dataUpdate['numbers_id'] = [13, 14, 18] # Select wanted numbers (after a print...)
+    # dataUpdate['numbers'] =  [51, 52, 53]
+    # dataUpdate['jobtodo_new']=  ["sum_Done", "mul_Done", "sum_Done"]
+    # dataUpdate['result'] =  [53, 104, 55]
 
-    req = requests.post(BASE_URL + "update_request",
-                        data=json.dumps(dataUpdate),
-                        headers=headers)
+    # req = requests.post(BASE_URL + "update_request",
+    #                     data=json.dumps(dataUpdate),
+    #                     headers=headers)
 
-    # Check status code (must be 200 or 201)
-    if req.status_code != 200 and req.status_code != 201 :
-        print("status code sended by http shows a error : " + str(req.status_code))
-        quit()
+    # # Check status code (must be 200 or 201)
+    # if req.status_code != 200 and req.status_code != 201 :
+    #     print("status code sended by http shows a error : " + str(req.status_code))
+    #     quit()
