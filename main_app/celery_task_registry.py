@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 """
 Task List Registry to be included in celery
 celery = Celery(app.import_name,

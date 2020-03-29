@@ -1,3 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+"""
+Define the Celery Tasks with two kinds of tasks :
+_ Async/Events tasks called by the views with delay function
+_ Periodic/CRON tasks called by celery beat 
+"""
+
 from main_app.app import celery_app
 from main_app.extensions import db
 from main_app.models.models import Request

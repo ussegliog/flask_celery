@@ -1,3 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+"""
+Define all available views with our Flask Application
+"""
+
 from flask import current_app as app
 from flask import (Blueprint,
                    render_template,

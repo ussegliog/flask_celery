@@ -27,7 +27,7 @@ if __name__ == "__main__":
         JsonData = json.load(f)
 
     
-    # Init the data after sum processings 
+    # Init the data after mul processings 
     dataMul = {}
     dataMul['numbers_id'] = JsonData['numbers_id'] # Select wanted numbers (after a print...)
     dataMul['numbers'] =  JsonData['numbers']
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         dataMul['jobtodo_new'].append('mul_Done')
         res = dataMul['numbers'][i] * 2
         dataMul['result'].append(res)
-
+        
     # Make the upate with the web service request
     req = requests.post(BASE_URL + "update_request",
                         data=json.dumps(dataMul),

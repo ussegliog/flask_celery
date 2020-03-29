@@ -1,3 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+"""
+Global settings 
+"""
+
 # DEV settings.py
 import os
 from pathlib import Path

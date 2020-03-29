@@ -1,4 +1,5 @@
-from main_app.extensions import db
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 """
 Define tables as models with SQLAlchemy.
@@ -6,6 +7,9 @@ Two tables in this example:
 _ One to store request and to have a direct interface with views (user APis)
 _ Another one to store number and job_to_do. Uses by processing. 
 """
+
+from main_app.extensions import db
+
 
 # Request table
 class Request(db.Model):

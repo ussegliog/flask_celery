@@ -1,3 +1,10 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+"""
+Instanciate our Celery and Flask applications
+"""
+
 from flask import Flask
 from celery import Celery
 from celery.schedules import crontab
