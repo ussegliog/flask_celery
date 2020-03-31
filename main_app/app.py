@@ -29,10 +29,6 @@ def make_celery(app=None):
     app.config['result_backend'] = 'redis://localhost:6379/0'
     app.config['beat_schedule'] = {
         # Executes every minute
-        "periodic_task-every-5-minutes": {
-            "task": "main_app.tasks.tasks.periodic_task",
-            "schedule": crontab(minute="*/5") # every 5 minutes
-        },
         "periodic_sum": {
             "task": "main_app.tasks.tasks.sum_task",
             "schedule": crontab(minute="*") # every minute

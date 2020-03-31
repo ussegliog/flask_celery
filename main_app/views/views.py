@@ -22,31 +22,16 @@ import pickle
 page = Blueprint('pages', __name__, template_folder='templates')
 
 
-
+# Root view
 @page.route("/")
 def index():
     """
     Index / Main page
     :return: html
     """
-    from main_app.tasks.tasks import my_task
     return "Pouet \n"
 
-
-@page.route("/execute_task", methods=['POST'])
-def _execute_task():
-    """
-    Invoke this function from an Ajax Call
-    :return: json
-    """  
-    from main_app.tasks.tasks import my_task
-
-    if request.method == 'POST':
-        # Invoke celery task
-        task = my_task.delay()
-
-    return jsonify({'taskID': task.id}), 201
-
+# POST or GET a "number request" to set or get information into the DB
 @page.route("/number_request", methods=['POST', 'GET'])
 def number_request():
     """
@@ -88,6 +73,7 @@ def number_request():
         
         return jsonify(jsonDict), 201
 
+# Check status (task status) for a given "number request"    
 @page.route("/check_request", methods=['GET'])
 def check_request():
     """
@@ -104,7 +90,8 @@ def check_request():
     res = celery.AsyncResult(task_id)
 
     return jsonify({'status' : res.status, 'response' : res.result}), 201
-    
+
+# Update all DB tables (Request and Numbers)
 @page.route("/update_request", methods=['POST'])
 def update_request():
     """

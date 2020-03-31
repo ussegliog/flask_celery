@@ -22,34 +22,6 @@ import subprocess
 celery = celery_app
 
 ################ Events tasks (with delay and called by views) ###########################
-@celery.task(bind=True)
-def my_task(self):
-    choice = random.choice(['Alpha',
-                            'Beta',
-                            'Gamma',
-                            'Delta',
-                            'Epsilon',
-                            'Zeta',
-                            'Eta',
-                            'Theta',
-                            'Iota',
-                            'Kappa',
-                            'Lambda',
-                            'Mu',
-                            'Nu',
-                            'Xi',
-                            'Omicron',
-                            'Pi',
-                            'Rho',
-                            'Sigma',
-                            'Tau',
-                            'Upsilon',
-                            'Phi',
-                            'Chi',
-                            'Psi',
-                            'Omega'])
-
-    return choice
 
 @celery.task()
 def handle_number_requests(request_id, number_list, jobtodo_list):
@@ -142,15 +114,6 @@ def bash_command(cmd):
 # python scripts
 def python_script(script, inputArg):
     subprocess.Popen(['python', script, inputArg])
-
-    
-@celery.task()
-def periodic_task():
-
-    bash_command('a="Apples and oranges" && echo "${a}"')
-    bash_command('sleep 20s && echo "After Pouet \n"')
-
-    print('Hi! from periodic_task')
  
 #### Processings : with sum and mul operations ####
 # Sum
