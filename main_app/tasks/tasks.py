@@ -72,7 +72,7 @@ def handle_number_requests(request_id, number_list, jobtodo_list):
 
         # Save chgts into our DB
         db.session.commit()
-
+        
     except Exception as exc :
         # Adapt response if exception (usually if rid is already into request table)
         response = "Error during DB transaction : Please Check the request"
@@ -87,10 +87,14 @@ def update_number_requests(Ntable_id, N_list, JTD_list, res_list):
     # List to store request_id for each number
     rId_list = []
 
+    # General Query
+    query = Numbers.query.filter(Numbers.id.in_(Ntable_id)).all()
+    
     # Update first, Numbers Table and store request id
     for i in range(0, len(Ntable_id)):
         # Query on id
-        my_number = Numbers.query.filter_by(id=Ntable_id[i]).first()
+        #my_number = Numbers.query.filter_by(id=Ntable_id[i]).first()
+        my_number = query[i] 
         # Update my number
         my_number.jobToDo = JTD_list[i]
         my_number.result_numbers = res_list[i]
@@ -98,30 +102,36 @@ def update_number_requests(Ntable_id, N_list, JTD_list, res_list):
         # Store rid for current number
         rId_list.append(my_number.request_id)
 
-        # Save chgts into our DB
-        db.session.commit()
-
-    print(rId_list)
-
     # Udpate then, Request_Table
-    for i in range(0, len(rId_list)):
+    # Get unique rid into our list
+    rid_unique = set(rId_list)
+
+    # Loop on each unique rid
+    for rid in rid_unique:
         # Query on request_id
-        my_request = Request.query.filter_by(request_id=rId_list[i]).first()
-
-        try :
-            # Udpate the right "job to do" with the number index
-            ind = pickle.loads(my_request.number_list).index(N_list[i])
-            new_JobToDo = pickle.loads(my_request.jobToDo_list)
-            new_JobToDo[ind] = JTD_list[i]
-            my_request.jobToDo_list = pickle.dumps(new_JobToDo)
-            
-        except ValueError:
-            print("number is not inside the list => no update")
-
-        # Save chgts into our DB
-        db.session.commit()
-
+        my_request = Request.query.filter_by(request_id=rid).first()
         
+        # Get all indexes with the current rid into rId_list
+        indexes = [n for n,x in enumerate(rId_list) if x==rid]
+
+        # Get number_list and jobtodo_list form current request
+        rNumberList = pickle.loads(my_request.number_list)
+        new_JobToDo = pickle.loads(my_request.jobToDo_list)
+        
+
+        # Loop on indexes
+        for ind in indexes:
+            try :
+                # Udpate the right "job to do" with the number index
+                indB = rNumberList.index(N_list[ind])
+                new_JobToDo[indB] = JTD_list[ind]
+        
+            except ValueError:
+                print("number is not inside the list => no update")
+
+        my_request.jobToDo_list = pickle.dumps(new_JobToDo)
+
+    db.session.commit()
 
 ################ Periodic tasks/CRON (called by celery beat) ###########################    
 
@@ -197,7 +207,7 @@ def mul_task(self):
 
     # Select into Numbers table, number with mul to do
     numbers_to_mul = Numbers.query.filter_by(jobToDo="mul").all()
-
+    
     print(len(numbers_to_mul))
 
     # Check number to mul (must be > 0)
