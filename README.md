@@ -27,7 +27,7 @@ Several technologies are used inside the code with Flask, Redis, Celery or Flask
 ![Technologies : ](./img/Technos.png?raw=true "Technology connections")
 
 
-First of all, Flask server receives and handles incomming http requests. Celery is a task queue implementation for Python web applications used to asynchronously execute work outside the HTTP request-response cycle. Periodic tasks can also be executed thanks to the beat. Celery uses a message broker for the communication between tasks (redis here). Eventually, the ORM Flask_SQLAlchamy provides a generic API to make transactions with several kind of databases (PostGres, MySQL, Sqlite ...). For this code, a sqlite database is settled.  
+First of all, Flask server receives and handles incoming http requests. Celery is a task queue implementation for Python web applications used to asynchronously execute work outside the HTTP request-response cycle. Periodic tasks can also be executed thanks to the beat. Celery uses a message broker for the communication between tasks (redis here). Eventually, the ORM Flask_SQLAlchamy provides a generic API to make transactions with several kind of databases (PostGres, MySQL, Sqlite ...). For this code, a sqlite database is settled.  
 
 
 ## Code organization
@@ -38,10 +38,18 @@ First of all, Flask server receives and handles incomming http requests. Celery 
 The Flask server is put at the center with four directories to add specific features or tests/processings :
 * *config/* : Define global path or configuration
 * *test/* : Simulate user requests
-* *Processings/* : Define simple processings (python scripts)
-* *main_app/* : Main diretory to initialize/instanciate Flask/Celery applications and to handle incomming requests
+* *processings/* : Define simple processings (python scripts)
+* *main_app/* : Main diretory to initialize/instanciate Flask/Celery applications and to handle incoming requests.
+The main_app repository contains the heart of source files, with the following organization:
 
 
 ![MainApp directory : ](./img/Rep_mainApp.png?raw=true "MainApp directory/")
+
+
+
+Two parts are displayed. On one hand, we find the initialization/configuration of applications or extensions. On the other hand, we can make out all mechanisms to handle requests, periodic tasks and DB transactions with :
+* *models* : Specify DB Tables
+* *views* : Define available views for the Web Server
+* *tasks* : Implement celery tasks (asynchronous and periodic)
 
 
