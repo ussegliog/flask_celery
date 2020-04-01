@@ -19,6 +19,7 @@ Example of WS Flask with celery tasks
 
 Two kind of celery tasks are available with periodic tasks and event tasks. The Event tasks can be trigerred by POST or GET requests such as curl -X POST -d "data" http://127.0.0.1:5000/number_request. Two python scripts into test/ repository provide automatic requests and send its to the Web Server. The periodic tasks are scheduled and directly sended by the celery beat.
 
+
 ## Technologies
 
 Several technologies are used inside the code with Flask, Redis, Celery or Flask_SQLAlchemy. Each library has a specific function and the connections between its are described below :
@@ -26,7 +27,11 @@ Several technologies are used inside the code with Flask, Redis, Celery or Flask
 ![Technologies : ](./img/Technos.png?raw=true "Technology connections")
 
 
+First of all, Flask server receives and handles incomming http requests. Celery is a task queue implementation for Python web applications used to asynchronously execute work outside the HTTP request-response cycle. Periodic tasks can also be executed thanks to the beat. Celery uses a message broker for the communication between tasks (redis here). Eventually, the ORM Flask_SQLAlchamy provides a generic API to make transactions with several kind of databases (PostGres, MySQL, Sqlite ...). For this code, a sqlite database is settled.  
+
+
 ## Code organization
+
 
 
 ![FlaskCelery directory : ](./img/Rep_FlaskCelery.png?raw=true "FlaskCelery directory/")
@@ -34,4 +39,5 @@ Several technologies are used inside the code with Flask, Redis, Celery or Flask
 
 
 ![MainApp directory : ](./img/Rep_mainApp.png?raw=true "MainApp directory/")
+
 
