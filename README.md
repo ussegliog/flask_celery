@@ -23,8 +23,15 @@ Two kind of celery tasks are available with periodic tasks and event tasks. The 
 
 Several technologies are used inside the code with Flask, Redis, Celery or Flask_SQLAlchemy. Each library has a specific function and the connections between its are described below :
 
+![Technologies : ](./img/Technos.png?raw=true "Technology connections")
+
 
 ## Code organization
 
 
+![FlaskCelery directory : ](./img/Rep_FlaskCelery.png?raw=true "FlaskCelery directory/")
+
+
+
+![MainApp directory : ](./img/Rep_mainApp.png?raw=true "MainApp directory/")
 
