@@ -32,10 +32,14 @@ First of all, Flask server receives and handles incomming http requests. Celery 
 
 ## Code organization
 
-
-
 ![FlaskCelery directory : ](./img/Rep_FlaskCelery.png?raw=true "FlaskCelery directory/")
 
+
+The Flask server is put at the center with four directories to add specific features or tests/processings :
+* *config/* : Define global path or configuration
+* *test/* : Simulate user requests
+* *Processings/* : Define simple processings (python scripts)
+* *main_app/* : Main diretory to initialize/instanciate Flask/Celery applications and to handle incomming requests
 
 
 ![MainApp directory : ](./img/Rep_mainApp.png?raw=true "MainApp directory/")
