@@ -58,6 +58,8 @@ if __name__ == "__main__":
 
     taskResponseJson = json.loads(req.text)
     status = json.loads(req.text)['status'] 
+
+    print("status for POST request : " + status)
     
     while (status != "SUCCESS" and status != "FAILURE" and status != "REVOKED"):
 
@@ -91,7 +93,8 @@ if __name__ == "__main__":
         print("status code sended by http shows a error : " + str(req.status_code))
         quit()
 
-    print("At the end : " + req.text)
+    if int(args.nb) < 10:
+        print("At the end : " + req.text)
 
     #### 4): Update the request  ####
     # Try a update : with number id
