@@ -1,6 +1,9 @@
 *~
 *.db
 *.rdb
+.\#*
+\#*\#
+
 
 processings/input_files/*.json
 

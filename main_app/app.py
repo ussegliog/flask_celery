@@ -32,10 +32,12 @@ def make_celery(app=None):
         "periodic_sum": {
             "task": "main_app.tasks.tasks.sum_task",
             "schedule": crontab(minute="*") # every minute
+            #"schedule": 10.0 # every 10.0 seconds
         },
         "periodic_mul": {
             "task": "main_app.tasks.tasks.mul_task",
             "schedule": crontab(minute="*") # every minute
+            #"schedule": 10.0 # every 10.0 seconds
         }
     }
 
